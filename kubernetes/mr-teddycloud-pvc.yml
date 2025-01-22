@@ -4,7 +4,7 @@ metadata:
   namespace: mr-teddycloud
   name: mr-teddycloud-pvc-data
 spec:
-  storageClassName: nfs
+  storageClassName: tc-nfs
   accessModes:
     - ReadWriteMany
   resources:
