@@ -15,7 +15,7 @@ spec:
       labels:
         app: mr-teddycloud
     spec:
-      hostNetwork: true
+#      hostNetwork: true
       containers:
         - name: mr-teddycloud
           image: ghcr.io/toniebox-reverse-engineering/teddycloud:latest
