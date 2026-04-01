@@ -1,8 +1,14 @@
-#kubectl delete -f mr-teddycloud-deployment.yml
-#kubectl delete -f mr-teddycloud-service.yml
-#kubectl delete -f mr-teddycloud-pvc.yml
-#kubectl delete -f mr-teddycloud-pv.yml
-#kubectl delete -f mr-teddycloud-ingress.yml
-#kubectl delete all,ingress --all -n mr-teddycloud
-kubectl delete all,deployment,pv,pvc --all -n mr-teddycloud
-kubectl delete namespace mr-teddycloud
+kubectl get applications -n argocd
+kubectl get applicationsets -n argocd
+
+kubectl patch application mr-do-teddycloud -n argocd --type=merge -p '{"operation": null}' || true
+kubectl patch application mr-do-teddycloud -n argocd --type=merge -p '{"metadata":{"finalizers":[]}}' || true
+kubectl delete application mr-do-teddycloud -n argocd --ignore-not-found
+
+kubectl delete all --all -n mr-do-teddycloud --wait=false || true
+kubectl delete pvc --all -n mr-do-teddycloud --wait=false || true
+kubectl delete pod --all -n mr-do-teddycloud --grace-period=0 --force --wait=false || true
+
+kubectl delete ns mr-do-teddycloud --ignore-not-found --wait=false || true
+kubectl patch namespace mr-do-teddycloud -p '{"spec":{"finalizers":[]}}' --type=merge || true
+kubectl delete pv mr-do-teddycloud-pv-data

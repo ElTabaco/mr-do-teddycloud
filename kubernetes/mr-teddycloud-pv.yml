@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  namespace: mr-teddycloud
-  name: mr-teddycloud-pv-data
+  namespace: mr-do-teddycloud
+  name: mr-do-teddycloud-pv-data
   labels:
-    usage: mr-teddycloud-pv-data
+    usage: mr-do-teddycloud-pv-data
 spec:
   capacity:
     storage: 32Gi
