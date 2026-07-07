@@ -1,27 +1,34 @@
-kubectl create namespace mr-do-teddycloud
-kubectl apply -f mr-do-teddycloud-pv.yml
-kubectl apply -f mr-do-teddycloud-pvc.yml
-kubectl apply -f mr-do-teddycloud-service.yml
-kubectl apply -f mr-do-teddycloud-deployment.yml
-#kubectl apply -f mr-do-teddycloud-ingress.yml
+#!/bin/bash
+# Apply mr-do-teddycloud via its ArgoCD Application. ArgoCD will reconcile
+# to the Git state automatically. Run from anywhere — the script self-locates.
+set -euo pipefail
 
-kubectl describe pod mr-do-teddycloud -n mr-do-teddycloud
-kubectl get pods -n mr-do-teddycloud -o wide
-kubectl get pods --all-namespaces -o wide
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
-#kubectl get ingress --all-namespaces -o wide
-#kubectl describe ingress -n mr-do-teddycloud
+kubectl apply -f "$REPO_ROOT/kubernetes/app.yaml"
 
-kubectl get pv --all-namespaces -o wide
-kubectl get pvc --all-namespaces -o wide
-kubectl describe pv mr-do-teddycloud-pv-data -n mr-do-teddycloud
-kubectl describe pvc mr-do-teddycloud-pvc-data -n mr-do-teddycloud
+# ── Verification (non-fatal) ──
+echo ""
+echo "=== Pods ==="
+kubectl get pods -n mr-do-teddycloud -o wide || true
 
-kubectl get configmap --all-namespaces -o wide
+echo ""
+echo "=== Service ==="
+kubectl get svc -n mr-do-teddycloud || true
 
-kubectl get svc --all-namespaces
-kubectl get services  -n mr-do-teddycloud -o wide
-kubectl describe services mr-do-teddycloud-service -n mr-do-teddycloud
+echo ""
+echo "=== Ingress (if any) ==="
+kubectl get ingress -n mr-do-teddycloud || true
 
-kubectl get all -n mr-do-teddycloud
+echo ""
+echo "=== PVC ==="
+kubectl describe pvc mr-do-teddycloud-pvc-data -n mr-do-teddycloud || true
 
+echo ""
+echo "=== PV ==="
+kubectl describe pv mr-do-teddycloud-pv-data || true
+
+echo ""
+echo "=== ArgoCD Application ==="
+kubectl get application mr-do-teddycloud -n argocd || true
